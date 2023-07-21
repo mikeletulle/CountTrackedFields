@@ -1,0 +1,60 @@
+<apex:page controller="showAllTrackedFields" lightningStylesheets="true">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <apex:slds >
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba( 255, 255, 255, .8) url('https://static.wixstatic.com/media/d27180_8ba5d7d0d8ce459aa955f57c6ff5782b~mv2.gif') 50% 50% no-repeat;
+        }
+        body.loading .modal {
+            overflow: hidden;
+        }
+        body.loading .modal {
+            display: block;
+        }
+        body{ padding:5px;}
+    </style>
+    <div class="slds" style="text-align: center;margin-left: 100px;margin-right: 100px;">
+        <div class="slds-box slds-theme_shade">
+            <h1>Total Tracked Objects=<span id="totalObjs"></span></h1>
+            <h1>Total Tracked Fields=<span id="totalFlds"></span></h1>
+        </div>
+        <apex:repeat value="{!iFrames}" var="frame">
+            <apex:outputText escape="False" value="{!frame}"></apex:outputText>
+        </apex:repeat>
+    </div>
+    </apex:slds>
+    <script>
+        var numObjects = 0;
+        var numFields = 0;
+        var numIFrames = {!numIFrames};
+        var framesLoaded = 0;
+        $body = $("body");
+        $body.addClass("loading");
+        $(document).ready(function () {
+            console.log("ready!");
+            myInterval = setInterval(countFields, 3000);
+        });
+        function countFields() {
+            if (numIFrames == framesLoaded) {
+                $body.removeClass("loading");
+                //alert('tracked objects:' + numObjects + ' tracked fields:' + numFields);
+                $("#totalObjs").html(''+numObjects);
+                $("#totalFlds").html(''+numFields);
+                clearInterval(myInterval);
+            }
+        }
+        function iframeLoaded(id) {
+         var iFrameID = document.getElementById(id);
+            iFrameID.height = iFrameID.contentWindow.document.body.scrollHeight + "px";
+        }
+    </script>
+    <div class="modal"></div>
+   
+</apex:page>
